@@ -46,19 +46,20 @@ public class MainServiceImpl {
 	public void indexArticles() {
 		File root = new File(env.getProperty("limtox.input.folder"));
 		File findinds_folder = new File(root + File.separator + "findings");
-		Collection<File> files = FileUtils.listFiles(findinds_folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-		for (File file : files) {
+		//Collection<File> files = FileUtils.listFiles(findinds_folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+		/*for (File file : files) {
 			try {
 				if (file.getName().endsWith(".json")) {
 					ObjectMapper objectMapper = new ObjectMapper();
-					PubMedDocument document = objectMapper.readValue(file, PubMedDocument.class);
+					PubMedDocument document = objectMapper.readValue(file, PubMedDocument.class);*/
 					//dataBasePopulationService.execute(file);
-					elasticSearchService.index(document);
-				}
+					//elasticSearchService.index(document);
+					elasticSearchService.index(null);
+			/*	}
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	
 }

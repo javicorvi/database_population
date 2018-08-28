@@ -42,96 +42,101 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	@Autowired
     private Environment env;
 	
-	@Autowired
-	@Qualifier("documentDaoJPAImpl")
+	//@Autowired
+	//@Qualifier("documentDaoJPAImpl")
 	private DocumentDao documentDao;
 	
-	@Autowired
-	@Qualifier("sectionDaoJPAImpl")
+	//@Autowired
+	//@Qualifier("sectionDaoJPAImpl")
 	private SectionDao sectionDao;
 	
-	@Autowired
-	@Qualifier("hepatotoxicityTermDaoJPAImpl")
+	//@Autowired
+	//@Qualifier("hepatotoxicityTermDaoJPAImpl")
 	private HepatotoxicityTermDao hepatotoxicityTermDao;
 	
-	@Autowired
-	@Qualifier("markerDaoJPAImpl")
+	//@Autowired
+	//@Qualifier("markerDaoJPAImpl")
 	private MarkerDao markerDao;
 	
-	@Autowired
-	@Qualifier("chemicalCompoundJPADaoImpl")
+	//@Autowired
+	//@Qualifier("chemicalCompoundJPADaoImpl")
 	private ChemicalCompoundDao chemicalCompoundDao;
 	
-	@Autowired
-	@Qualifier("cytochromeDaoJPAImpl")
+	//@Autowired
+	//@Qualifier("cytochromeDaoJPAImpl")
 	private CytochromeDao cytochromeDao;
-	
-	@Override
+
 	public void execute(File source_root_folder) {
-		File findinds_folder = new File(source_root_folder + File.separator + "findings");
-		Collection<File> files = FileUtils.listFiles(findinds_folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-		for (File file : files) {
-			try {
-				if (file.getName().endsWith(".json")) {
-					ObjectMapper objectMapper = new ObjectMapper();
-					PubMedDocument document = objectMapper.readValue(file, PubMedDocument.class);
-					for (Sentence sentence : document.getSentences()) {
-						
-						
-						for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
-							chemicalCompoundSentence.setSentence(sentence);
-							ChemicalCompound chemicalCompound = chemicalCompoundDao.findByName(chemicalCompoundSentence.getChemicalCompound().getName());
-							if(chemicalCompound!=null) {
-								chemicalCompoundSentence.setChemicalCompound(chemicalCompound);
-								chemicalCompoundSentence.setSentence(sentence);
-							}
-						}
-						for (HepatotoxicityTermSentence hepatotoxicitySentence : sentence.getHepatotoxicityTermSentences()) {
-							HepatotoxicityTerm hepatotoxicityTerm = hepatotoxicityTermDao.findByTerm(hepatotoxicitySentence.getHepatotoxicityTerm().getTerm());
-							if(hepatotoxicityTerm!=null) {
-								hepatotoxicitySentence.setHepatotoxicityTerm(hepatotoxicityTerm);
-								hepatotoxicitySentence.setSentence(sentence);
-							}
-						}
-						for (MarkerSentence markerSentence : sentence.getMarkerSentences()) {
-							markerSentence.setSentence(sentence);
-							Marker marker = markerDao.findByIdentifier(markerSentence.getMarker().getMarker_identifier());
-							if(marker!=null) {
-								markerSentence.setMarker(marker);
-								markerSentence.setSentence(sentence);
-							}
-						}
-//						for (CytochromeSentence cytochromeSentence : sentence.getCytochromeSentences()) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+//	@Override
+//	public void execute(File source_root_folder) {
+//		File findinds_folder = new File(source_root_folder + File.separator + "findings");
+//		Collection<File> files = FileUtils.listFiles(findinds_folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+//		for (File file : files) {
+//			try {
+//				if (file.getName().endsWith(".json")) {
+//					ObjectMapper objectMapper = new ObjectMapper();
+//					PubMedDocument document = objectMapper.readValue(file, PubMedDocument.class);
+//					for (Sentence sentence : document.getSentences()) {
+//						
+//						
+//						for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
+//							chemicalCompoundSentence.setSentence(sentence);
+//							ChemicalCompound chemicalCompound = chemicalCompoundDao.findByName(chemicalCompoundSentence.getChemicalCompound().getName());
+//							if(chemicalCompound!=null) {
+//								chemicalCompoundSentence.setChemicalCompound(chemicalCompound);
+//								chemicalCompoundSentence.setSentence(sentence);
+//							}
+//						}
+//						for (HepatotoxicityTermSentence hepatotoxicitySentence : sentence.getHepatotoxicityTermSentences()) {
+//							HepatotoxicityTerm hepatotoxicityTerm = hepatotoxicityTermDao.findByTerm(hepatotoxicitySentence.getHepatotoxicityTerm().getTerm());
+//							if(hepatotoxicityTerm!=null) {
+//								hepatotoxicitySentence.setHepatotoxicityTerm(hepatotoxicityTerm);
+//								hepatotoxicitySentence.setSentence(sentence);
+//							}
+//						}
+//						for (MarkerSentence markerSentence : sentence.getMarkerSentences()) {
 //							markerSentence.setSentence(sentence);
-//							Marker marker = markerDao.findByIdentifier(cytochromeSentence.getMarker().getMarker_identifier());
+//							Marker marker = markerDao.findByIdentifier(markerSentence.getMarker().getMarker_identifier());
 //							if(marker!=null) {
 //								markerSentence.setMarker(marker);
 //								markerSentence.setSentence(sentence);
 //							}
 //						}
-//						for (ChemicalCompoundCytochromeSentence chemicalCompoundCytochromeSentence : sentence.getChemicalCompoundCytochromeSentences()) {
-//							chemicalCompoundCytochromeSentence.setSentence(sentence);
+////						for (CytochromeSentence cytochromeSentence : sentence.getCytochromeSentences()) {
+////							markerSentence.setSentence(sentence);
+////							Marker marker = markerDao.findByIdentifier(cytochromeSentence.getMarker().getMarker_identifier());
+////							if(marker!=null) {
+////								markerSentence.setMarker(marker);
+////								markerSentence.setSentence(sentence);
+////							}
+////						}
+////						for (ChemicalCompoundCytochromeSentence chemicalCompoundCytochromeSentence : sentence.getChemicalCompoundCytochromeSentences()) {
+////							chemicalCompoundCytochromeSentence.setSentence(sentence);
+////						}
+////						for (HepatotoxicityTermChemicalCompoundSentence hepatotoxicityTermChemicalCompoundSentence : sentence.getHepatotoxicityTermChemicalCompoundSentences()) {
+////							hepatotoxicityTermChemicalCompoundSentence.setSentence(sentence);
+////						}
+////						for (MarkerChemicalCompoundSentence markerChemicalCompoundSentence : sentence.getMarkerChemicalCompoundSentences()) {
+////							markerChemicalCompoundSentence.setSentence(sentence);
+////						}
+//						Section section = sectionDao.findByName(sentence.getSection().getName());
+//						if(section==null) {
+//							section = sectionDao.create(section);
 //						}
-//						for (HepatotoxicityTermChemicalCompoundSentence hepatotoxicityTermChemicalCompoundSentence : sentence.getHepatotoxicityTermChemicalCompoundSentences()) {
-//							hepatotoxicityTermChemicalCompoundSentence.setSentence(sentence);
-//						}
-//						for (MarkerChemicalCompoundSentence markerChemicalCompoundSentence : sentence.getMarkerChemicalCompoundSentences()) {
-//							markerChemicalCompoundSentence.setSentence(sentence);
-//						}
-						Section section = sectionDao.findByName(sentence.getSection().getName());
-						if(section==null) {
-							section = sectionDao.create(section);
-						}
-						sentence.setSection(section);
-						sentence.setDocument(document);
-					}
-					documentDao.save(document);
-				}
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+//						sentence.setSection(section);
+//						sentence.setDocument(document);
+//					}
+//					documentDao.save(document);
+//				}
+//			}catch(Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 
 }

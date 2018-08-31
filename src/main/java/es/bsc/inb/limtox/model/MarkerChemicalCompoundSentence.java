@@ -1,27 +1,12 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
-@Entity
-@Table(name="chemicalcompound_marker_sentence")
 public class MarkerChemicalCompoundSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne
 	private ChemicalCompound chemicalCompound;
 	
-	@ManyToOne
 	private Marker marker;
 	
 	private RelationRule relationRule;
@@ -30,18 +15,18 @@ public class MarkerChemicalCompoundSentence {
 	
 	private Integer quantity;
 	
-	@ManyToOne
 	@JsonIgnore
 	private Sentence sentence;
 		
 	public MarkerChemicalCompoundSentence() {}
 	
-	public MarkerChemicalCompoundSentence(ChemicalCompound chemicalCompound, Marker marker,Float score, Integer quantity, Sentence sentence) {
+	public MarkerChemicalCompoundSentence(ChemicalCompound chemicalCompound, Marker marker,Float score, Integer quantity, Sentence sentence, RelationRule relationRule) {
 		this.chemicalCompound = chemicalCompound;
 		this.marker = marker;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
+		this.relationRule = relationRule;
 	}
 
 	public Integer getId() {

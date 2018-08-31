@@ -1,25 +1,23 @@
 package es.bsc.inb.limtox.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="chemicalcompound_sentence")
-public class ChemicalCompoundSentence {
+public class ChemicalCompoundSentence /*extends RelevantTermSentence*/{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	
-	@ManyToOne
-	private ChemicalCompound chemicalCompound;
 	
 	private Float score;
 	
@@ -28,23 +26,26 @@ public class ChemicalCompoundSentence {
 	@JsonIgnore
 	@ManyToOne
 	private Sentence sentence;
-		
-
+	
+	@OneToMany(cascade = CascadeType.ALL, 
+	mappedBy = "chemicalCompoundSentence", orphanRemoval = true)
+	private List<Ocurrence> ocurrences;
+	
+	@ManyToOne
+	private ChemicalCompound chemicalCompound;
+	
+	private String chemicalCompoundValueTypeFounded;
+	
 	public ChemicalCompoundSentence() {}
 	
-	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, Float score, Integer quantity, Sentence sentence) {
+	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, String chemicalCompoundValueTypeFounded, Float score, Integer quantity, List<Ocurrence> ocurrences, Sentence sentence) {
+		//super(score, quantity, sentence, ocurrences);
+		this.score=score;
+		this.quantity=quantity;
+		this.sentence=sentence;
+		this.ocurrences=ocurrences;
 		this.chemicalCompound = chemicalCompound;
-		this.score = score;
-		this.quantity = quantity;
-		this.sentence = sentence;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
+		this.chemicalCompoundValueTypeFounded = chemicalCompoundValueTypeFounded;
 	}
 
 	public ChemicalCompound getChemicalCompound() {
@@ -53,6 +54,14 @@ public class ChemicalCompoundSentence {
 
 	public void setChemicalCompound(ChemicalCompound chemicalCompound) {
 		this.chemicalCompound = chemicalCompound;
+	}
+
+	public String getChemicalCompoundValueTypeFounded() {
+		return chemicalCompoundValueTypeFounded;
+	}
+
+	public void setChemicalCompoundValueTypeFounded(String chemicalCompoundValueTypeFounded) {
+		this.chemicalCompoundValueTypeFounded = chemicalCompoundValueTypeFounded;
 	}
 
 	public Float getScore() {
@@ -79,4 +88,24 @@ public class ChemicalCompoundSentence {
 		this.sentence = sentence;
 	}
 
+	public List<Ocurrence> getOcurrences() {
+		return ocurrences;
+	}
+
+	public void setOcurrences(List<Ocurrence> ocurrences) {
+		this.ocurrences = ocurrences;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
+	
+	
+	
+	
 }

@@ -1,73 +1,67 @@
 package es.bsc.inb.limtox.model;
 
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 @Entity
-@Table(name="compounddict")
+@Table(name="chemical_compound")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChemicalCompound implements LimtoxEntity {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	@Column(name="name")
+	
+	//private Integer keyId;
+	
 	@JsonProperty("Chemical_name")
 	private String name;
-	@Column(name="name2Struct")
+	
+	@JsonProperty("nameToStruct")
 	private Integer nameToStruct;
-	@Column(name="created")
-	private Date created;
-	@Column(name="updated")
-	private Date updated;
-	@Column(name="\"chemIdPlus\"")
+	
 	@JsonProperty("ChemIDplus_id")
 	private String chemPlusId;
-	@Column(name="chebi")
+	
 	@JsonProperty("ChEBI_id")
 	private String chebi;
-	@Column(name="\"casRegistryNumber\"")
+	
 	@JsonProperty("CAS_registry")
 	private String casRegistryNumber;
-	@Column(name="\"pubChemCompound\"")
+	
 	@JsonProperty("PubChem_compound_id")
 	private String pubChemCompundId;
-	@Column(name="\"pubChemSubstance\"")
+	
 	@JsonProperty("PubChem_substance_id")
 	private String pubChemSubstance;
-	@Column(name="\"inChi\"")
+	
 	@JsonProperty("IUPAC_International_Chemical_id")
 	private String inchi;
-	@Column(name="\"drugBank\"")
+	
 	@JsonProperty("Drugback_id")
 	private String drugBankId;
-	@Column(name="\"humanMetabolome\"")
+	
 	@JsonProperty("Human_metabolome_id")
-	private String humanMetabolome;
-	@Column(name="\"keggCompound\"")
+	private String humanMetabolomeId;
+	
 	@JsonProperty("KEGG_compound_id")
-	private String keggCompound; 
-	@Column(name="mesh")
+	private String keggCompoundId; 
+	
 	@JsonProperty("MeSH_substance_id")
-	private String mesh; 
-	@Column(name="\"nrDbIds\"")
+	private String meshSubstanceId; 
+	
 	@JsonProperty("nrDBIds")
 	private String nrDBIds;
-	@Column(name="smile")
+	
 	@JsonProperty("SMILES")
-	private String smile;
-	@Column(name="image_id")
-	private String imageId;
-	@Column(name="structure_id")
-	private String structureId;
+	private String smiles;
+	
 	
 	public boolean equals(Object word_token) {
 		if(word_token==null) {
@@ -80,158 +74,230 @@ public class ChemicalCompound implements LimtoxEntity {
 		return false;
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
+
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
+
 	public Integer getNameToStruct() {
 		return nameToStruct;
 	}
 
+
 	public void setNameToStruct(Integer nameToStruct) {
-		this.nameToStruct = nameToStruct;
+		if(nameToStruct!=null && nameToStruct.equals("NaN")) {
+			this.nameToStruct = null;
+		}else {
+			this.nameToStruct = nameToStruct;
+		}
+		
 	}
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 	public String getChemPlusId() {
 		return chemPlusId;
 	}
 
+
 	public void setChemPlusId(String chemPlusId) {
-		this.chemPlusId = chemPlusId;
+		if(chemPlusId!=null && chemPlusId.equals("NaN")) {
+			this.chemPlusId = null;
+		}else {
+			this.chemPlusId = chemPlusId;
+		}
 	}
+
 
 	public String getChebi() {
 		return chebi;
 	}
 
+
 	public void setChebi(String chebi) {
-		this.chebi = chebi;
+		if(chebi!=null && chebi.equals("NaN")) {
+			this.chebi = null;
+		}else {
+			this.chebi = chebi;
+		}
 	}
+
 
 	public String getCasRegistryNumber() {
 		return casRegistryNumber;
 	}
 
+
 	public void setCasRegistryNumber(String casRegistryNumber) {
-		this.casRegistryNumber = casRegistryNumber;
+		if(casRegistryNumber!=null && casRegistryNumber.equals("NaN")) {
+			this.casRegistryNumber = null;
+		}else {
+			this.casRegistryNumber = casRegistryNumber;
+		}
 	}
+
 
 	public String getPubChemCompundId() {
 		return pubChemCompundId;
 	}
 
+
 	public void setPubChemCompundId(String pubChemCompundId) {
-		this.pubChemCompundId = pubChemCompundId;
+		if(pubChemCompundId!=null && pubChemCompundId.equals("NaN")) {
+			this.pubChemCompundId = null;
+		}else {
+			this.pubChemCompundId = pubChemCompundId;
+		}
 	}
+
 
 	public String getPubChemSubstance() {
 		return pubChemSubstance;
 	}
 
+
 	public void setPubChemSubstance(String pubChemSubstance) {
-		this.pubChemSubstance = pubChemSubstance;
+		if(pubChemSubstance!=null && pubChemSubstance.equals("NaN")) {
+			this.pubChemSubstance = null;
+		}else {
+			this.pubChemSubstance = pubChemSubstance;
+		}
 	}
+
 
 	public String getInchi() {
 		return inchi;
 	}
 
+
 	public void setInchi(String inchi) {
-		this.inchi = inchi;
+		if(inchi!=null && inchi.equals("NaN")) {
+			this.inchi = null;
+		}else {
+			this.inchi = inchi;
+		}
 	}
+
 
 	public String getDrugBankId() {
 		return drugBankId;
 	}
 
+
 	public void setDrugBankId(String drugBankId) {
-		this.drugBankId = drugBankId;
+		if(drugBankId!=null && drugBankId.equals("NaN")) {
+			this.drugBankId = null;
+		}else {
+			this.drugBankId = drugBankId;
+		}
 	}
 
-	public String getHumanMetabolome() {
-		return humanMetabolome;
+
+	public String getHumanMetabolomeId() {
+		return humanMetabolomeId;
 	}
+
 
 	public void setHumanMetabolome(String humanMetabolome) {
-		this.humanMetabolome = humanMetabolome;
+		if(humanMetabolome!=null && humanMetabolome.equals("NaN")) {
+			this.humanMetabolomeId = null;
+		}else {
+			this.humanMetabolomeId = humanMetabolome;
+		}
 	}
 
-	public String getKeggCompound() {
-		return keggCompound;
+
+	public String getKeggCompoundId() {
+		return keggCompoundId;
 	}
 
-	public void setKeggCompound(String keggCompound) {
-		this.keggCompound = keggCompound;
+
+	public void setKeggCompoundId(String keggCompoundId) {
+		if(keggCompoundId!=null && keggCompoundId.equals("NaN")) {
+			this.keggCompoundId = null;
+		}else {
+			this.keggCompoundId = keggCompoundId;
+		}
 	}
 
-	public String getMesh() {
-		return mesh;
+
+	public String getMeshSubstanceId() {
+		return meshSubstanceId;
 	}
 
-	public void setMesh(String mesh) {
-		this.mesh = mesh;
+
+	public void setMeshSubstanceId(String meshSubstanceId) {
+		if(meshSubstanceId!=null && meshSubstanceId.equals("NaN")) {
+			this.meshSubstanceId = null;
+		}else {
+			this.meshSubstanceId = meshSubstanceId;
+		}
 	}
+
 
 	public String getNrDBIds() {
 		return nrDBIds;
 	}
 
+
 	public void setNrDBIds(String nrDBIds) {
-		this.nrDBIds = nrDBIds;
+		if(nrDBIds!=null && nrDBIds.equals("NaN")) {
+			this.nrDBIds = null;
+		}else {
+			this.nrDBIds = nrDBIds;
+		}
 	}
 
-	public String getSmile() {
-		return smile;
+
+	public String getSmiles() {
+		return smiles;
 	}
 
-	public void setSmile(String smile) {
-		this.smile = smile;
+
+	public void setSmiles(String smiles) {
+		if(smiles!=null && smiles.equals("NaN")) {
+			this.smiles = null;
+		}else {
+			this.smiles = smiles;
+		}
 	}
 
-	public String getImageId() {
-		return imageId;
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
-	public void setImageId(String imageId) {
-		this.imageId = imageId;
+
+	@Override
+	public Integer getId() {
+		return id;
 	}
 
-	public String getStructureId() {
-		return structureId;
-	}
 
-	public void setStructureId(String structureId) {
-		this.structureId = structureId;
+//	public Integer getKeyId() {
+//		return keyId;
+//	}
+//
+//
+//	public void setKeyId(Integer keyId) {
+//		this.keyId = keyId;
+//	}
+
+
+	public void toLowerCase() {
+		if(name!=null && !name.equals(name.toLowerCase())) {
+			name=name.toLowerCase();
+		}
 	}
 	
+	@Override
+	public int hashCode() {
+	    return name.hashCode();
+	}
 	
 	
 }

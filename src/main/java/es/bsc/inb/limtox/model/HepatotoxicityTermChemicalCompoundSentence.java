@@ -1,27 +1,13 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
-@Entity
-@Table(name="chemicalcompound_hepatotoxicityterm_sentence")
 public class HepatotoxicityTermChemicalCompoundSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private Integer id;
 	
-	@ManyToOne
 	private ChemicalCompound chemicalCompound;
 	
-	@ManyToOne
 	private HepatotoxicityTerm hepatotoxicityTerm;
 	
 	private RelationRule relationRule;
@@ -30,7 +16,9 @@ public class HepatotoxicityTermChemicalCompoundSentence {
 	
 	private Integer quantity;
 	
-	@ManyToOne
+	private ChemicalCompoundHepatotoxicityTermPattern pattern;
+	
+	
 	@JsonIgnore
 	private Sentence sentence;
 		
@@ -101,6 +89,15 @@ public class HepatotoxicityTermChemicalCompoundSentence {
 		this.relationRule = relationRule;
 	}
 
+	public ChemicalCompoundHepatotoxicityTermPattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(ChemicalCompoundHepatotoxicityTermPattern pattern) {
+		this.pattern = pattern;
+	}
+
+	
 	
 	
 }

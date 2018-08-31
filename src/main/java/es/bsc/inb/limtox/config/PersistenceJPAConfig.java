@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@PropertySource({ "classpath:databases.properties" })
+@PropertySource({ "classpath:database_population.properties" })
 @EnableTransactionManagement
 public class PersistenceJPAConfig{
 	

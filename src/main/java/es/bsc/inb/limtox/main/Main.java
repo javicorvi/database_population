@@ -12,6 +12,8 @@ class Main {
         ctx.register(AppConfig.class);
         ctx.refresh();
         MainServiceImpl mainService = (MainServiceImpl)ctx.getBean("mainServiceImpl");
-        mainService.indexArticles();
+        //mainService.indexArticles();
+        String properties_parameters_path = args[0];
+        mainService.execute(properties_parameters_path);
     }
 }

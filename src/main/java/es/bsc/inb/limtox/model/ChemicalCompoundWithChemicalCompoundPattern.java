@@ -3,7 +3,7 @@ package es.bsc.inb.limtox.model;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChemicalCompoundHepatotoxicityTermPattern implements LimtoxEntity{
+public class ChemicalCompoundWithChemicalCompoundPattern implements LimtoxEntity{
 
 	private Integer keyId;
 	
@@ -93,10 +93,10 @@ public class ChemicalCompoundHepatotoxicityTermPattern implements LimtoxEntity{
     public boolean equals(Object obj) {
 	    if (obj == null) {
 	        return false;
-	    }else if(adverse_pattern==null || ((ChemicalCompoundHepatotoxicityTermPattern)obj).adverse_pattern==null) {
+	    }else if(adverse_pattern==null || ((ChemicalCompoundWithChemicalCompoundPattern)obj).adverse_pattern==null) {
 	    	return false;
 	    }else {
-	    	if(adverse_pattern.equals(((ChemicalCompoundHepatotoxicityTermPattern)obj).adverse_pattern)) {
+	    	if(adverse_pattern.equals(((ChemicalCompoundWithChemicalCompoundPattern)obj).adverse_pattern)) {
 	    		return true;
 	    	}
 	    	return false;

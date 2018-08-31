@@ -1,27 +1,13 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
-@Entity
-@Table(name="chemicalcompound_cytochrome_sentence")
 public class ChemicalCompoundCytochromeSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private Integer id;
 	
-	@ManyToOne
 	private ChemicalCompound chemicalCompound;
 	
-	@ManyToOne
 	private Cytochrome cytochrome;
 	
 	private RelationRule relationRule;
@@ -29,11 +15,11 @@ public class ChemicalCompoundCytochromeSentence {
 	private Float score;
 	
 	private Integer quantity;
-	
-	@ManyToOne
 	@JsonIgnore
 	private Sentence sentence;
-		
+	
+	private CytochromeChemicalCompoundPattern pattern;
+	
 	public ChemicalCompoundCytochromeSentence() {}
 	
 	public ChemicalCompoundCytochromeSentence(ChemicalCompound chemicalCompound, Cytochrome cytochrome,Float score, Integer quantity, Sentence sentence) {
@@ -99,6 +85,18 @@ public class ChemicalCompoundCytochromeSentence {
 	public void setRelationRule(RelationRule relationRule) {
 		this.relationRule = relationRule;
 	}
+
+	public CytochromeChemicalCompoundPattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(CytochromeChemicalCompoundPattern pattern) {
+		this.pattern = pattern;
+	}
+	
+	
+
+	
 
 	
 	

@@ -18,6 +18,7 @@ import es.bsc.inb.limtox.model.ChemicalCompoundSentence;
 import es.bsc.inb.limtox.model.Document;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.HepatotoxicityTermSentence;
+import es.bsc.inb.limtox.model.Ocurrence;
 import es.bsc.inb.limtox.model.Sentence;
 
 @Service
@@ -64,6 +65,11 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 					}
 					chemicalCompoundSentence.setChemicalCompound(chemicalCompound);
 					chemicalCompoundSentence.setSentence(sentence);
+					if(chemicalCompoundSentence.getOcurrences()!=null) {
+						for (Ocurrence ocurrence : chemicalCompoundSentence.getOcurrences()) {
+							ocurrence.setChemicalCompoundSentence(chemicalCompoundSentence);
+						}
+					}
 				}
 //				for (HepatotoxicityTermSentence hepatotoxicitySentence : sentence.getHepatotoxicityTermSentences()) {
 //					HepatotoxicityTerm hepatotoxicityTerm = hepatotoxicityTermDao.findByTerm(hepatotoxicitySentence.getHepatotoxicityTerm().getOriginal_entry());

@@ -21,7 +21,7 @@ CREATE TABLE chemical_compound
    casRegistryNumber varchar(255),
    pubChemCompundId varchar(255),
    pubChemSubstance varchar(255),
-   inchi varchar(255),	  
+   inchi varchar,	  
    drugBankId varchar(255),	  
    humanMetabolomeId varchar(255),	  
    keggCompoundId varchar(255),	  

@@ -17,4 +17,5 @@ public interface GenericDao<T extends LimtoxEntity> {
     public List<T> findAll();
     
     public T save(T t);
+    
 }

@@ -65,6 +65,7 @@ public class PersistenceJPAConfig{
 	private Properties additionalProperties() {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", env.getProperty("limtox.hibernate.dialect"));
+		properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("limtox.spring.jpa.hibernate.ddl-auto"));
 		return properties;
 	}
 }

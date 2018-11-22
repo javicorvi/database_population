@@ -1,24 +1,23 @@
 package es.bsc.inb.limtox.services;
-
 import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.bsc.inb.limtox.daos.ChemicalCompoundDao;
-import es.bsc.inb.limtox.daos.CytochromeDao;
 import es.bsc.inb.limtox.daos.DocumentDao;
-import es.bsc.inb.limtox.daos.HepatotoxicityTermDao;
-import es.bsc.inb.limtox.model.ChemicalCompound;
-import es.bsc.inb.limtox.model.ChemicalCompoundSentence;
+import es.bsc.inb.limtox.daos.DocumentSourceRepository;
+import es.bsc.inb.limtox.daos.EntityInstanceRepository;
 import es.bsc.inb.limtox.model.Document;
-import es.bsc.inb.limtox.model.HepatotoxicityTerm;
-import es.bsc.inb.limtox.model.HepatotoxicityTermSentence;
-import es.bsc.inb.limtox.model.Ocurrence;
+import es.bsc.inb.limtox.model.DocumentSource;
+import es.bsc.inb.limtox.model.EntityInstance;
+import es.bsc.inb.limtox.model.EntityInstanceFound;
+import es.bsc.inb.limtox.model.RelevantDocumentTopicInformation;
+import es.bsc.inb.limtox.model.RelevantSectionTopicInformation;
+import es.bsc.inb.limtox.model.RelevantSentenceTopicInformation;
+import es.bsc.inb.limtox.model.Section;
 import es.bsc.inb.limtox.model.Sentence;
 
 @Service
@@ -27,36 +26,57 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	static final Logger dataBasePopulationLog = Logger.getLogger("dataBasePopulationLog");
 	
 	@Autowired
-	@Qualifier("documentDaoJPAImpl")
-	private DocumentDao documentDao;
-	
-//	@Autowired
-//	@Qualifier("sectionDaoJPAImpl")
-//	private SectionDao sectionDao;
+	private DocumentDao documentRepository;
+
+	@Autowired
+	private DocumentSourceRepository documentSourceRepository;
 	
 	@Autowired
-	@Qualifier("chemicalCompoundDaoJPAImpl")
-	private ChemicalCompoundDao chemicalCompoundDao;
+	private EntityInstanceRepository entityInstanceRepository;
 	
-//	@Autowired
-//	@Qualifier("hepatotoxicityTermDaoJPAImpl")
-//	private HepatotoxicityTermDao hepatotoxicityTermDao;
-	
-//	@Autowired
-//	@Qualifier("markerDaoJPAImpl")
-//	private MarkerDao markerDao;
-
-	
-	//@Autowired
-	//@Qualifier("cytochromeDaoJPAImpl")
-	private CytochromeDao cytochromeDao;
-
 	public void execute(File documentFile) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			Document document = objectMapper.readValue(documentFile, Document.class);
 			dataBasePopulationLog.info("Processig document " + documentFile);
-			for (Sentence sentence : document.getSentences()) {
+			if(document.getDocumentSource()!=null) {
+				DocumentSource documentSource = documentSourceRepository.findByName(document.getDocumentSource().getName());
+				if(documentSource==null) {
+					documentSourceRepository.save(document.getDocumentSource());
+				}else {
+					document.setDocumentSource(documentSource);
+				}
+			}
+			for (RelevantDocumentTopicInformation relevantTopicInformation : document.getRelevantTopicsInformation()) {
+				relevantTopicInformation.setDocument(document);
+			}
+			
+			for (Section section : document.getSections()) {
+				for (RelevantSectionTopicInformation relevantTopicInformation : section.getRelevantTopicsInformation()) {
+					relevantTopicInformation.setSection(section);
+				}
+				for (EntityInstanceFound entitiesInstanceFound : section.getEntitiesInstanceFound()) {
+					EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
+					if(entityInstance==null) {
+						entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
+					}else {
+						entitiesInstanceFound.setEntityInstance(entityInstance);
+					}
+					entitiesInstanceFound.setSection(section);
+				}
+				
+				for (Sentence sentence : section.getSentences()) {
+					for (RelevantSentenceTopicInformation relevantTopicInformation : sentence.getRelevantTopicsInformation()) {
+						relevantTopicInformation.setSentence(sentence);
+					}
+					
+					sentence.setSection(section);
+				}
+				
+				section.setDocument(document);
+			}
+			
+			/*for (Sentence sentence : document.getSentences()) {
 				for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
 					chemicalCompoundSentence.setSentence(sentence);
 					ChemicalCompound chemicalCompound = chemicalCompoundDao.findByName(chemicalCompoundSentence.getChemicalCompound().getName());
@@ -70,7 +90,7 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 							ocurrence.setChemicalCompoundSentence(chemicalCompoundSentence);
 						}
 					}
-				}
+				}*/
 //				for (HepatotoxicityTermSentence hepatotoxicitySentence : sentence.getHepatotoxicityTermSentences()) {
 //					HepatotoxicityTerm hepatotoxicityTerm = hepatotoxicityTermDao.findByTerm(hepatotoxicitySentence.getHepatotoxicityTerm().getOriginal_entry());
 //					if(hepatotoxicityTerm!=null) {
@@ -108,9 +128,9 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 //					section = sectionDao.create(section);
 //				}
 				//sentence.setSection(section);
-				sentence.setDocument(document);
-			}
-			documentDao.save(document);
+			/*	sentence.setDocument(document);
+			}*/
+			documentRepository.save(document);
 		}catch(Exception e) {
 			dataBasePopulationLog.error("Error inserting into database document : " + documentFile, e);
 		}

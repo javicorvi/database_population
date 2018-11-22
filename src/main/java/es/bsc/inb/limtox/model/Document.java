@@ -4,49 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.InheritanceType;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Document implements LimtoxEntity {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	private String sourceId;
+	@Column(name="document_id",length=20,nullable=false)
+	private String documentId;
 	
-	private String fulltext;
+	@Column(name="title",length=1000,nullable=false)
+	private String title;
 	
-	private Double score;
+	@ManyToOne(optional=false)
+	private DocumentSource documentSource;
 	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "document", orphanRemoval = true)
-	private List<Sentence> sentences = new ArrayList<Sentence>();
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "document", orphanRemoval = true)
+	private List<RelevantDocumentTopicInformation> relevantTopicsInformation = new ArrayList<RelevantDocumentTopicInformation>(); 
 	
-	//private List<MeshChemicalCompound> meshChemicalCompounds = new ArrayList<MeshChemicalCompound>();
-	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "document", orphanRemoval = true)
+	private List<Section> sections = new ArrayList<Section>();
+
 	public Document() {
 		super();
 	}
 	
-	public Document(String sourceId, String fulltext, Double score) {
-		this.sourceId=sourceId;
-		this.fulltext=fulltext;
-		this.score=score;
+	public Document(String documentId, DocumentSource documentSource, String title) {
+		this.documentId = documentId;
+		this.title = title;
+		this.documentSource = documentSource;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -55,43 +54,53 @@ public class Document implements LimtoxEntity {
 		this.id = id;
 	}
 
-	public List<Sentence> getSentences() {
-		return sentences;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setSentences(List<Sentence> sentences) {
-		this.sentences = sentences;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public String getSourceId() {
-		return sourceId;
+	public List<Section> getSections() {
+		return sections;
 	}
 
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
+	public void setSections(List<Section> sections) {
+		this.sections = sections;
 	}
-//	public List<MeshChemicalCompound> getMeshChemicalCompounds() {
-//		return meshChemicalCompounds;
-//	}
-//	public void setMeshChemicalCompounds(List<MeshChemicalCompound> meshChemicalCompounds) {
-//		this.meshChemicalCompounds = meshChemicalCompounds;
-//	}
-	
-	public String getFulltext() {
-		return fulltext;
+
+	public String getDocumentId() {
+		return documentId;
 	}
-	public void setFulltext(String fulltext) {
-		this.fulltext = fulltext;
+
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
 	}
-	public Double getScore() {
-		return score;
+
+	public DocumentSource getDocumentSource() {
+		return documentSource;
 	}
-	public void setScore(Double score) {
-		this.score = score;
+
+	public void setDocumentSource(DocumentSource documentSource) {
+		this.documentSource = documentSource;
 	}
-	
-	
-	
+
+	public void addRelevantDocumentTopicInformation(RelevantDocumentTopicInformation relevantTopicInformation) {
+		relevantTopicsInformation.add(relevantTopicInformation);
+	}
+
+	public void addSection(Section section) {
+		sections.add(section);
+	}
+
+	public List<RelevantDocumentTopicInformation> getRelevantTopicsInformation() {
+		return relevantTopicsInformation;
+	}
+
+	public void setRelevantTopicsInformation(List<RelevantDocumentTopicInformation> relevantTopicsInformation) {
+		this.relevantTopicsInformation = relevantTopicsInformation;
+	}
 	
 	
 	

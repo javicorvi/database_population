@@ -11,82 +11,69 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
-@Table(name="sentence")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sentence implements LimtoxEntity {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	private String sentenceId="1";
+	@Column(name = "sentenceId", nullable = false, length = 50)
+	private String sentenceId;
 	
-	private String text;
-	
-	private Double score;
-	
-	@Column(name="n_order")
+	@Column(name = "n_order", nullable = false)
 	private Integer order;
 	
-	@ManyToOne
-	private Document document;
+	@Column(name = "text", nullable = false, length = 2000)
+	private String text;
+	
+	private Integer speciesQuantity;
+	
+	private Integer diseasesQuantity;
+	
+	private Integer genesQuantity;
+	
+	private Integer chemicalCompoundsQuantity;
 	
 	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
-	private List<ChemicalCompoundSentence> chemicalCompoundSentences = new ArrayList<ChemicalCompoundSentence>();
-			
-			
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
+			mappedBy = "sentence", orphanRemoval = true)
+	private List<RelevantSentenceTopicInformation> relevantTopicsInformation = new ArrayList<RelevantSentenceTopicInformation>(); 
+	
 	@Transient
-	private List<HepatotoxicityTermSentence> hepatotoxicityTermSentences = new ArrayList<HepatotoxicityTermSentence>();
-			
-			
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<CytochromeSentence> cytochromeSentences = new ArrayList<CytochromeSentence>();
-//			
-//			
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<MarkerSentence> markerSentences = new ArrayList<MarkerSentence>();
-//		
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<ChemicalCompoundCytochromeSentence> chemicalCompoundCytochromeSentences = new ArrayList<ChemicalCompoundCytochromeSentence>();
-//
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences = new ArrayList<HepatotoxicityTermChemicalCompoundSentence>();
-//			
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences = new ArrayList<MarkerChemicalCompoundSentence>();
-//
-//	@OneToMany(cascade = CascadeType.ALL, 
-//	mappedBy = "sentence", orphanRemoval = true)
-//	private List<TaxonomySentence> taxonomySentences = new ArrayList<TaxonomySentence>();
+	@OneToMany(cascade = CascadeType.ALL, 
+			mappedBy = "sentence", orphanRemoval = true)
+	private List<EntityInstanceFound> entitiesInstanceFound = new  ArrayList<EntityInstanceFound>();
 	
+	@Transient
+	@OneToMany(cascade = CascadeType.ALL, 
+			mappedBy = "sentence", orphanRemoval = true)
+	private List<EntityAssociationSentence> entitiesAssociationsInstanceFound = new  ArrayList<EntityAssociationSentence>();
 	
-	public Sentence() {}
+	@ManyToOne(optional=false)
+	private Section section;
 	
-	public Sentence(Document document, String text, int order) {
+	public Sentence() {
 		super();
-		this.document = document;
+	}
+
+	public Sentence(String sentenceId, Integer order, String text) {
+		this.sentenceId = sentenceId;
+		this.order = order;
 		this.text = text;
-		this.order=order;
 	}
 
 	
-	public Sentence(String[] id2, Integer order, String text, Double score, Document document) {
-		super();
-		this.document = document;
-		this.text = text;
-		this.order=order;
+	public List<EntityInstanceFound> findEntitiesInstanceFoundByType(String type) {
+		List<EntityInstanceFound> entitiesInstanceFound = new ArrayList<EntityInstanceFound>();
+		for (EntityInstanceFound entityInstanceFound : this.entitiesInstanceFound) {
+			if(entityInstanceFound.getEntityInstance().getEntityTypeName().equals(type)){
+				entitiesInstanceFound.add(entityInstanceFound);
+			}
+		}
+		return entitiesInstanceFound;
 	}
 
 	public Integer getId() {
@@ -97,14 +84,6 @@ public class Sentence implements LimtoxEntity {
 		this.id = id;
 	}
 
-	public Document getDocument() {
-		return document;
-	}
-
-	public void setDocument(Document document) {
-		this.document = document;
-	}
-
 	public String getText() {
 		return text;
 	}
@@ -112,73 +91,6 @@ public class Sentence implements LimtoxEntity {
 	public void setText(String text) {
 		this.text = text;
 	}
-
-	public List<ChemicalCompoundSentence> getChemicalCompoundSentences() {
-		return chemicalCompoundSentences;
-	}
-
-	public void setChemicalCompoundSentences(List<ChemicalCompoundSentence> chemicalCompoundSentences) {
-		this.chemicalCompoundSentences = chemicalCompoundSentences;
-	}
-
-	public List<HepatotoxicityTermSentence> getHepatotoxicityTermSentences() {
-		return hepatotoxicityTermSentences;
-	}
-
-	public void setHepatotoxicityTermSentences(List<HepatotoxicityTermSentence> hepatotoxicityTermSentences) {
-		this.hepatotoxicityTermSentences = hepatotoxicityTermSentences;
-	}
-
-//	public List<CytochromeSentence> getCytochromeSentences() {
-//		return cytochromeSentences;
-//	}
-//
-//	public void setCytochromeSentences(List<CytochromeSentence> cytochromeSentences) {
-//		this.cytochromeSentences = cytochromeSentences;
-//	}
-//
-//	public List<ChemicalCompoundCytochromeSentence> getChemicalCompoundCytochromeSentences() {
-//		return chemicalCompoundCytochromeSentences;
-//	}
-//
-//	public void setChemicalCompoundCytochromeSentences(
-//			List<ChemicalCompoundCytochromeSentence> chemicalCompoundCytochromeSentences) {
-//		this.chemicalCompoundCytochromeSentences = chemicalCompoundCytochromeSentences;
-//	}
-//
-//	public List<MarkerSentence> getMarkerSentences() {
-//		return markerSentences;
-//	}
-//
-//	public void setMarkerSentences(List<MarkerSentence> markerSentences) {
-//		this.markerSentences = markerSentences;
-//	}
-//
-//	public List<MarkerChemicalCompoundSentence> getMarkerChemicalCompoundSentences() {
-//		return markerChemicalCompoundSentences;
-//	}
-//
-//	public void setMarkerChemicalCompoundSentences(List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences) {
-//		this.markerChemicalCompoundSentences = markerChemicalCompoundSentences;
-//	}
-//
-//	public List<HepatotoxicityTermChemicalCompoundSentence> getHepatotoxicityTermChemicalCompoundSentences() {
-//		return hepatotoxicityTermChemicalCompoundSentences;
-//	}
-//
-//	public void setHepatotoxicityTermChemicalCompoundSentences(
-//			List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences) {
-//		this.hepatotoxicityTermChemicalCompoundSentences = hepatotoxicityTermChemicalCompoundSentences;
-//	}
-//
-//	
-//	public List<TaxonomySentence> getTaxonomySentences() {
-//		return taxonomySentences;
-//	}
-//
-//	public void setTaxonomySentences(List<TaxonomySentence> taxonomySentences) {
-//		this.taxonomySentences = taxonomySentences;
-//	}
 
 	public Integer getOrder() {
 		return order;
@@ -196,13 +108,98 @@ public class Sentence implements LimtoxEntity {
 		this.sentenceId = sentenceId;
 	}
 
-	public Double getScore() {
-		return score;
+	
+	public List<RelevantSentenceTopicInformation> getRelevantTopicsInformation() {
+		return relevantTopicsInformation;
 	}
 
-	public void setScore(Double score) {
-		this.score = score;
+	public void setRelevantTopicsInformation(List<RelevantSentenceTopicInformation> relevantTopicsInformation) {
+		this.relevantTopicsInformation = relevantTopicsInformation;
 	}
+
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
+	public void addRelevantTopicInformation(RelevantSentenceTopicInformation relevantSentenceTopicInformation) {
+		this.relevantTopicsInformation.add(relevantSentenceTopicInformation);
+	}
+
+	public List<EntityInstanceFound> getEntitiesInstanceFound() {
+		return entitiesInstanceFound;
+	}
+
+	public void setEntitiesInstanceFound(List<EntityInstanceFound> entitiesInstanceFound) {
+		this.entitiesInstanceFound = entitiesInstanceFound;
+	}
+
+	public void addEntityInstanceFound(EntityInstanceFound entityInstanceFound) {
+		entitiesInstanceFound.add(entityInstanceFound);
+		
+	}
+
+	public RelevantTopicInformation getRelevantTopicsInformationByName(String topicName) {
+		for (RelevantSentenceTopicInformation relevantTopicInformation : relevantTopicsInformation) {
+			if(relevantTopicInformation.getTopicName().equals(topicName)) {
+				return relevantTopicInformation;
+			}
+		}
+		return null;
+	}
+
+	public List<EntityAssociationSentence> getEntitiesAssociationsInstanceFound() {
+		return entitiesAssociationsInstanceFound;
+	}
+
+	public void setEntitiesAssociationsInstanceFound(List<EntityAssociationSentence> entitiesAssociationsInstanceFound) {
+		this.entitiesAssociationsInstanceFound = entitiesAssociationsInstanceFound;
+	}
+
+	public void addEntityAssociationInstanceFound(EntityAssociationSentence entityAssociationSentence) {
+		entitiesAssociationsInstanceFound.add(entityAssociationSentence);
+		
+	}
+
+	public Integer getSpeciesQuantity() {
+		return speciesQuantity;
+	}
+
+	public void setSpeciesQuantity(Integer speciesQuantity) {
+		this.speciesQuantity = speciesQuantity;
+	}
+
+	public Integer getDiseasesQuantity() {
+		return diseasesQuantity;
+	}
+
+	public void setDiseasesQuantity(Integer diseasesQuantity) {
+		this.diseasesQuantity = diseasesQuantity;
+	}
+
+	public Integer getGenesQuantity() {
+		return genesQuantity;
+	}
+
+	public void setGenesQuantity(Integer genesQuantity) {
+		this.genesQuantity = genesQuantity;
+	}
+
+	public Integer getChemicalCompoundsQuantity() {
+		return chemicalCompoundsQuantity;
+	}
+
+	public void setChemicalCompoundsQuantity(Integer chemicalCompoundsQuantity) {
+		this.chemicalCompoundsQuantity = chemicalCompoundsQuantity;
+	}
+
+	
+
+	
+	
 	
 	
 	

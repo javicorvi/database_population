@@ -33,7 +33,6 @@ public class EntityInstanceFound implements LimtoxEntity {
 	@ManyToOne
 	private Section section;
 	
-	@Transient
 	@ManyToOne
 	private Sentence sentence;
 	

@@ -1,19 +1,33 @@
 package es.bsc.inb.limtox.services;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.daos.DocumentSourceRepository;
 import es.bsc.inb.limtox.daos.EntityInstanceRepository;
+import es.bsc.inb.limtox.daos.EntityTypeRepository;
 import es.bsc.inb.limtox.model.Document;
 import es.bsc.inb.limtox.model.DocumentSource;
+import es.bsc.inb.limtox.model.EntityAssociationSentence;
 import es.bsc.inb.limtox.model.EntityInstance;
 import es.bsc.inb.limtox.model.EntityInstanceFound;
+import es.bsc.inb.limtox.model.EntityType;
 import es.bsc.inb.limtox.model.RelevantDocumentTopicInformation;
 import es.bsc.inb.limtox.model.RelevantSectionTopicInformation;
 import es.bsc.inb.limtox.model.RelevantSentenceTopicInformation;
@@ -33,6 +47,10 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	
 	@Autowired
 	private EntityInstanceRepository entityInstanceRepository;
+	
+	@Autowired
+	private EntityTypeRepository entityTypeRepository;
+	
 	
 	public void execute(File documentFile) {
 		try {
@@ -69,10 +87,29 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 					for (RelevantSentenceTopicInformation relevantTopicInformation : sentence.getRelevantTopicsInformation()) {
 						relevantTopicInformation.setSentence(sentence);
 					}
+					for (EntityInstanceFound entitiesInstanceFound : sentence.getEntitiesInstanceFound()) {
+						EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
+						if(entityInstance==null) {
+							EntityType entityType = entityTypeRepository.findByName(entitiesInstanceFound.getEntityInstance().getEntityTypeName());
+							if(entityType!=null) {
+								entitiesInstanceFound.getEntityInstance().setEntityType(entityType);
+								entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
+							}else {
+								//error la entity type debe existir
+							}
+							
+						}else {
+							entitiesInstanceFound.setEntityInstance(entityInstance);
+						}
+						entitiesInstanceFound.setSentence(sentence);
+					}
+					
+					for (EntityAssociationSentence entityAssociationSentence : sentence.getEntitiesAssociationsInstanceFound()) {
+						entityAssociationSentence.setSentence(sentence);
+					}
 					
 					sentence.setSection(section);
 				}
-				
 				section.setDocument(document);
 			}
 			
@@ -135,6 +172,67 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 			dataBasePopulationLog.error("Error inserting into database document : " + documentFile, e);
 		}
 	}
+	
+	/**
+	 * 
+	 * @throws IOException
+	 */
+	protected String readJsonFile(String file_path) throws IOException {
+		try{
+			if(Files.isRegularFile(Paths.get(file_path))) {
+				FileReader fr = new FileReader(file_path);
+			    BufferedReader br = new BufferedReader(fr);
+			
+			    StringBuilder textBuilder = new StringBuilder();
+			    String line;
+			    while ((line=br.readLine())!=null) {
+			    	textBuilder.append(line);
+			    }
+			    br.close();
+			    fr.close();
+			    return textBuilder.toString();
+			}  else {
+				
+			}
+	    }catch(IOException ex){
+	       ex.printStackTrace();   
+	    }
+		return null;
+	}
+	
+	public HashMap<String, EntityType> loadEntityTypes(File inputEntityStructureFilePath) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			//this.entitiesTypes =  objectMapper.readValue(inputEntityStructureFilePath, new TypeReference<Map<String, EntityType>>(){});
+			
+			String json_string = readJsonFile(inputEntityStructureFilePath.getAbsolutePath());
+			JsonNode rootNode = objectMapper.readTree(json_string);
+			//JsonNode data = rootNode.path("hepatotoxicity");
+			return objectMapper.readValue(rootNode.toString(), new TypeReference<Map<String, EntityType>>(){});
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void createEntityTypes(File inputEntityStructureFilePath) {
+		HashMap<String, EntityType> entitiesTypes = this.loadEntityTypes(inputEntityStructureFilePath);
+		for (EntityType entityType : entitiesTypes.values()) {
+			/*if(entityTypeRepository.findByName(entityType.getName())==null) {
+				entityTypeRepository.save(entityType);
+			}*/
+			
+		}
+	}
+	
 	
 //	@Override
 //	public void execute(File source_root_folder) {

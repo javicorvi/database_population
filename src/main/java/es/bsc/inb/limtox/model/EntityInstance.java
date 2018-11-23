@@ -28,8 +28,7 @@ public class EntityInstance {
 	@Column(length=50,nullable=false)
 	private String taggerName;
 	
-	@Transient
-	@ManyToOne
+	@ManyToOne(optional=false, cascade=CascadeType.ALL)
 	private EntityType entityType;
 	
 	@Transient

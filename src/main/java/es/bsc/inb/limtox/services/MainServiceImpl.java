@@ -39,9 +39,11 @@ public class MainServiceImpl {
 			dataBasePopulationLog.info("Documents Database Population with properties :  " +  propertiesParametersPath);
 			Properties propertiesParameters = this.loadPropertiesParameters(propertiesParametersPath);
 			dataBasePopulationLog.info("Input directory with the articles to tag : " + propertiesParameters.getProperty("inputDirectory"));
+			dataBasePopulationLog.info("Entity Types structure path : " + propertiesParameters.getProperty("inputEntityStructureFilePath"));
 			dataBasePopulationLog.info("Output directory : " + propertiesParameters.getProperty("outputDirectory"));
 			
 			String inputDirectoryPath = propertiesParameters.getProperty("inputDirectory");
+			String inputEntityStructureFilePath = propertiesParameters.getProperty("inputEntityStructureFilePath");
 			String outputDirectoryPath = propertiesParameters.getProperty("outputDirectory");
 			
 			File inputDirectory = new File(inputDirectoryPath);
@@ -53,7 +55,14 @@ public class MainServiceImpl {
 		    if(!outputDirectory.exists())
 		    	outputDirectory.mkdirs();
 			
-			
+		    
+		    File inputEntityStructureFile = new File(inputEntityStructureFilePath);
+			if(!inputEntityStructureFile.exists()) {
+		    	return ;
+		    }
+		    dataBasePopulationService.createEntityTypes(inputEntityStructureFile);
+		    
+		    
 			List<String> filesProcessed = readFilesProcessed(outputDirectoryPath); 
 		    BufferedWriter filesPrecessedWriter = new BufferedWriter(new FileWriter(outputDirectoryPath + File.separator + "list_files_processed.dat", true));
 		    File[] files =  inputDirectory.listFiles();
@@ -85,6 +94,7 @@ public class MainServiceImpl {
 			dataBasePopulationLog.error("Generic error in the database population step",e);
 		} 
 	}
+	
 	
 	private List<String> readFilesProcessed(String outputDirectoryPath) {
 		try {

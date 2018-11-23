@@ -56,8 +56,6 @@ public class Section implements LimtoxEntity {
 			mappedBy = "section", orphanRemoval = true)
 	private List<Sentence> sentences = new ArrayList<Sentence>();
 	
-	
-	
 	public Section() {
 		super();
 	}

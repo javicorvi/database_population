@@ -42,14 +42,11 @@ public class Sentence implements LimtoxEntity {
 			mappedBy = "sentence", orphanRemoval = true)
 	private List<RelevantSentenceTopicInformation> relevantTopicsInformation = new ArrayList<RelevantSentenceTopicInformation>(); 
 	
-	@Transient
 	@OneToMany(cascade = CascadeType.ALL, 
 			mappedBy = "sentence", orphanRemoval = true)
 	private List<EntityInstanceFound> entitiesInstanceFound = new  ArrayList<EntityInstanceFound>();
 	
-	@Transient
-	@OneToMany(cascade = CascadeType.ALL, 
-			mappedBy = "sentence", orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "sentence", orphanRemoval = true)
 	private List<EntityAssociationSentence> entitiesAssociationsInstanceFound = new  ArrayList<EntityAssociationSentence>();
 	
 	@ManyToOne(optional=false)

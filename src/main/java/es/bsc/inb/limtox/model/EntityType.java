@@ -8,16 +8,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-//@Entity
+import javax.persistence.Transient;
+@Entity
 public class EntityType {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private String name="";
-	@OneToMany(cascade = CascadeType.ALL, 
-			mappedBy = "entityType", orphanRemoval = true)
+	
+	@Transient
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "entityType", orphanRemoval = true)
 	private List<Reference> references;
 
 	private Float weightScore;
+	
+	public EntityType() {
+		super();
+	}
 	
 	public EntityType(String name, List<Reference> references, Float weightScore) {
 		super();

@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-//@Entity
+@Entity
 public class EntityAssociationSentence {
 
 	@Id
@@ -25,16 +25,20 @@ public class EntityAssociationSentence {
 	
 	private String patternName;
 	
-	@ManyToOne
+	@ManyToOne(optional=false)
 	private Sentence sentence;
 	
+	
+	
+	public EntityAssociationSentence() {
+		super();
+	}
+
 	public EntityAssociationSentence(String entityInstanceFoundId, String entityInstanceName, String associationEntityInstanceFoundId,  String associationEntityInstanceFoundName, String keyword, String patternName) {
 		this.entityInstanceFoundId = entityInstanceFoundId;
 		this.entityInstanceName = entityInstanceName;
-		
 		this.associationEntityInstanceFoundId = associationEntityInstanceFoundId;
 		this.associationEntityInstanceFoundName = associationEntityInstanceFoundName;
-		
 		this.keyword = keyword;
 		this.patternName = patternName;
 	}

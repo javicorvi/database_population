@@ -60,7 +60,7 @@ public class MainServiceImpl {
 			if(!inputEntityStructureFile.exists()) {
 		    	return ;
 		    }
-		    dataBasePopulationService.createEntityTypes(inputEntityStructureFile);
+		    dataBasePopulationService.createAndLoadEntityTypes(inputEntityStructureFile);
 		    
 		    
 			List<String> filesProcessed = readFilesProcessed(outputDirectoryPath); 

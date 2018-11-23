@@ -14,6 +14,8 @@ public class EntityType {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+	
 	private String name="";
 	
 	@Transient

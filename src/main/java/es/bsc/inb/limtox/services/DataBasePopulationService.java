@@ -6,5 +6,5 @@ public interface DataBasePopulationService {
 	
 	public void execute(File source_root_folder);
 
-	public void createEntityTypes(File inputEntityStructureFilePath);
+	public void createAndLoadEntityTypes(File inputEntityStructureFilePath);
 }

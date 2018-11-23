@@ -22,6 +22,7 @@ import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.daos.DocumentSourceRepository;
 import es.bsc.inb.limtox.daos.EntityInstanceRepository;
 import es.bsc.inb.limtox.daos.EntityTypeRepository;
+import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.Document;
 import es.bsc.inb.limtox.model.DocumentSource;
 import es.bsc.inb.limtox.model.EntityAssociationSentence;
@@ -51,6 +52,7 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	@Autowired
 	private EntityTypeRepository entityTypeRepository;
 	
+	HashMap<String, EntityType> entitiesTypes = new HashMap<String,EntityType>();
 	
 	public void execute(File documentFile) {
 		try {
@@ -90,7 +92,7 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 					for (EntityInstanceFound entitiesInstanceFound : sentence.getEntitiesInstanceFound()) {
 						EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
 						if(entityInstance==null) {
-							EntityType entityType = entityTypeRepository.findByName(entitiesInstanceFound.getEntityInstance().getEntityTypeName());
+							EntityType entityType = entitiesTypes.get(entitiesInstanceFound.getEntityInstance().getEntityTypeName());
 							if(entityType!=null) {
 								entitiesInstanceFound.getEntityInstance().setEntityType(entityType);
 								entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
@@ -159,7 +161,7 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 //				}
 //				for (MarkerChemicalCompoundSentence markerChemicalCompoundSentence : sentence.getMarkerChemicalCompoundSentences()) {
 //					markerChemicalCompoundSentence.setSentence(sentence);
-//				}
+//				}entityTypeRepository
 //				Section section = sectionDao.findByName(sentence.getSection().getName());
 //				if(section==null) {
 //					section = sectionDao.create(section);
@@ -223,14 +225,25 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 		return null;
 	}
 
-	public void createEntityTypes(File inputEntityStructureFilePath) {
+	public void createAndLoadEntityTypes(File inputEntityStructureFilePath) {
 		HashMap<String, EntityType> entitiesTypes = this.loadEntityTypes(inputEntityStructureFilePath);
 		for (EntityType entityType : entitiesTypes.values()) {
-			/*if(entityTypeRepository.findByName(entityType.getName())==null) {
-				entityTypeRepository.save(entityType);
-			}*/
-			
+			try {
+				EntityType entityTypeDB = entityTypeRepository.findByName(entityType.getName());
+				if(entityTypeDB==null) {
+					entityType = entityTypeRepository.save(entityType);
+					this.entitiesTypes.put(entityType.getName(), entityType);
+				}else {
+					this.entitiesTypes.put(entityTypeDB.getName(), entityTypeDB);
+				}
+			} catch (MoreThanOneEntityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+		entityTypeRepository.findAll();
+		
 	}
 	
 	

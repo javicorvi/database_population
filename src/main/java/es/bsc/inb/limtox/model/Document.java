@@ -21,10 +21,10 @@ public class Document implements LimtoxEntity {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name="document_id",length=20,nullable=false)
+	@Column(name="document_id",length=20,nullable=false, unique=true)
 	private String documentId;
 	
-	@Column(name="title",length=1000,nullable=false)
+	@Column(name="title",length=1000,nullable=true)
 	private String title;
 	
 	@ManyToOne(optional=false)

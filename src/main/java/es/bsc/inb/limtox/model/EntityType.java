@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 @Entity
 public class EntityType {
 	
@@ -18,10 +17,10 @@ public class EntityType {
 	
 	private String name="";
 	
-	@Transient
+	//@Transient
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "entityType", orphanRemoval = true)
 	private List<Reference> references;
-
+	
 	private Float weightScore;
 	
 	public EntityType() {
@@ -34,11 +33,11 @@ public class EntityType {
 		this.references = references;
 		this.weightScore =  weightScore;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
-
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -46,11 +45,11 @@ public class EntityType {
 	public List<Reference> getReferences() {
 		return references;
 	}
-
+	
 	public void setReferences(List<Reference> references) {
 		this.references = references;
 	}
-
+	
 	public Reference getReferenceByName(String name) {
 		for (Reference reference : references) {
 			if(reference.getName().equals(name)) {

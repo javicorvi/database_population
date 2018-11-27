@@ -21,7 +21,7 @@ public class Sentence implements LimtoxEntity {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "sentenceId", nullable = false, length = 50)
+	@Column(name = "sentenceId", nullable = false, length = 50, unique=true)
 	private String sentenceId;
 	
 	@Column(name = "n_order", nullable = false)

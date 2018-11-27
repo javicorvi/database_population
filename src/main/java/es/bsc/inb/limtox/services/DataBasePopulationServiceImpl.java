@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.daos.DocumentSourceRepository;
 import es.bsc.inb.limtox.daos.EntityInstanceRepository;
 import es.bsc.inb.limtox.daos.EntityTypeRepository;
+import es.bsc.inb.limtox.daos.ReferenceRepository;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.Document;
 import es.bsc.inb.limtox.model.DocumentSource;
@@ -29,6 +32,8 @@ import es.bsc.inb.limtox.model.EntityAssociationSentence;
 import es.bsc.inb.limtox.model.EntityInstance;
 import es.bsc.inb.limtox.model.EntityInstanceFound;
 import es.bsc.inb.limtox.model.EntityType;
+import es.bsc.inb.limtox.model.Reference;
+import es.bsc.inb.limtox.model.ReferenceValue;
 import es.bsc.inb.limtox.model.RelevantDocumentTopicInformation;
 import es.bsc.inb.limtox.model.RelevantSectionTopicInformation;
 import es.bsc.inb.limtox.model.RelevantSentenceTopicInformation;
@@ -51,6 +56,10 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	
 	@Autowired
 	private EntityTypeRepository entityTypeRepository;
+	
+	@Autowired
+	private ReferenceRepository referenceRepository;
+	
 	
 	HashMap<String, EntityType> entitiesTypes = new HashMap<String,EntityType>();
 	
@@ -76,12 +85,7 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 					relevantTopicInformation.setSection(section);
 				}
 				for (EntityInstanceFound entitiesInstanceFound : section.getEntitiesInstanceFound()) {
-					EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
-					if(entityInstance==null) {
-						entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
-					}else {
-						entitiesInstanceFound.setEntityInstance(entityInstance);
-					}
+					retrieveEntityInstance(entitiesInstanceFound);
 					entitiesInstanceFound.setSection(section);
 				}
 				
@@ -90,88 +94,65 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 						relevantTopicInformation.setSentence(sentence);
 					}
 					for (EntityInstanceFound entitiesInstanceFound : sentence.getEntitiesInstanceFound()) {
-						EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
-						if(entityInstance==null) {
-							EntityType entityType = entitiesTypes.get(entitiesInstanceFound.getEntityInstance().getEntityTypeName());
-							if(entityType!=null) {
-								entitiesInstanceFound.getEntityInstance().setEntityType(entityType);
-								entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
-							}else {
-								//error la entity type debe existir
-							}
-							
-						}else {
-							entitiesInstanceFound.setEntityInstance(entityInstance);
-						}
+						retrieveEntityInstance(entitiesInstanceFound);
 						entitiesInstanceFound.setSentence(sentence);
 					}
-					
 					for (EntityAssociationSentence entityAssociationSentence : sentence.getEntitiesAssociationsInstanceFound()) {
 						entityAssociationSentence.setSentence(sentence);
 					}
-					
 					sentence.setSection(section);
 				}
 				section.setDocument(document);
 			}
 			
-			/*for (Sentence sentence : document.getSentences()) {
-				for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
-					chemicalCompoundSentence.setSentence(sentence);
-					ChemicalCompound chemicalCompound = chemicalCompoundDao.findByName(chemicalCompoundSentence.getChemicalCompound().getName());
-					if(chemicalCompound==null) {
-						chemicalCompound = chemicalCompoundDao.save(chemicalCompoundSentence.getChemicalCompound());
-					}
-					chemicalCompoundSentence.setChemicalCompound(chemicalCompound);
-					chemicalCompoundSentence.setSentence(sentence);
-					if(chemicalCompoundSentence.getOcurrences()!=null) {
-						for (Ocurrence ocurrence : chemicalCompoundSentence.getOcurrences()) {
-							ocurrence.setChemicalCompoundSentence(chemicalCompoundSentence);
-						}
-					}
-				}*/
-//				for (HepatotoxicityTermSentence hepatotoxicitySentence : sentence.getHepatotoxicityTermSentences()) {
-//					HepatotoxicityTerm hepatotoxicityTerm = hepatotoxicityTermDao.findByTerm(hepatotoxicitySentence.getHepatotoxicityTerm().getOriginal_entry());
-//					if(hepatotoxicityTerm!=null) {
-//						hepatotoxicitySentence.setHepatotoxicityTerm(hepatotoxicityTerm);
-//						hepatotoxicitySentence.setSentence(sentence);
-//					}
-//				}
-//				for (MarkerSentence markerSentence : sentence.getMarkerSentences()) {
-//					markerSentence.setSentence(sentence);
-//					Marker marker = markerDao.findByIdentifier(markerSentence.getMarker().getMarker_identifier());
-//					if(marker!=null) {
-//						markerSentence.setMarker(marker);
-//						markerSentence.setSentence(sentence);
-//					}
-//				}
-//				for (CytochromeSentence cytochromeSentence : sentence.getCytochromeSentences()) {
-//					markerSentence.setSentence(sentence);
-//					Marker marker = markerDao.findByIdentifier(cytochromeSentence.getMarker().getMarker_identifier());
-//					if(marker!=null) {
-//						markerSentence.setMarker(marker);
-//						markerSentence.setSentence(sentence);
-//					}
-//				}
-//				for (ChemicalCompoundCytochromeSentence chemicalCompoundCytochromeSentence : sentence.getChemicalCompoundCytochromeSentences()) {
-//					chemicalCompoundCytochromeSentence.setSentence(sentence);
-//				}
-//				for (HepatotoxicityTermChemicalCompoundSentence hepatotoxicityTermChemicalCompoundSentence : sentence.getHepatotoxicityTermChemicalCompoundSentences()) {
-//					hepatotoxicityTermChemicalCompoundSentence.setSentence(sentence);
-//				}
-//				for (MarkerChemicalCompoundSentence markerChemicalCompoundSentence : sentence.getMarkerChemicalCompoundSentences()) {
-//					markerChemicalCompoundSentence.setSentence(sentence);
-//				}entityTypeRepository
-//				Section section = sectionDao.findByName(sentence.getSection().getName());
-//				if(section==null) {
-//					section = sectionDao.create(section);
-//				}
-				//sentence.setSection(section);
-			/*	sentence.setDocument(document);
-			}*/
 			documentRepository.save(document);
+		}catch(MismatchedInputException e) {
+			dataBasePopulationLog.error("Error reading the document with jackson : " + documentFile, e);
 		}catch(Exception e) {
 			dataBasePopulationLog.error("Error inserting into database document : " + documentFile, e);
+		}
+	}
+	/**
+	 * Retrieve the information of entityInstance asociated with a entityInstance Found, if not presente in database its created
+	 * @param entitiesInstanceFound
+	 * @throws MoreThanOneEntityException
+	 */
+	private void retrieveEntityInstance(EntityInstanceFound entitiesInstanceFound) throws MoreThanOneEntityException {
+		EntityInstance entityInstance = entityInstanceRepository.findByValue(entitiesInstanceFound.getEntityInstance().getValue());
+		if(entityInstance==null) {
+			EntityType entityType = entitiesTypes.get(entitiesInstanceFound.getEntityInstance().getEntityTypeName());
+			if(entityType==null) {
+				entityType = entitiesTypes.get(entitiesInstanceFound.getEntityInstance().getEntityTypeName().toLowerCase());//fix this topic hepatotoxicity and HEPATOTOXICITY
+			}
+			if(entityType!=null) {
+				entitiesInstanceFound.getEntityInstance().setEntityType(entityType);
+				retrieveReferenceValues(entitiesInstanceFound);
+				entityInstanceRepository.save(entitiesInstanceFound.getEntityInstance());
+			}else {
+				dataBasePopulationLog.error("No entity Type founded for " + entitiesInstanceFound.getEntityInstance().getEntityTypeName() + " please analize and correct this error. ");
+			}
+		}else {
+			entitiesInstanceFound.setEntityInstance(entityInstance);
+		}
+	}
+	/**
+	 * Retrieve the reference values information of a entityInstance found, if not presente in database its created
+	 * @param entitiesInstanceFound
+	 * @throws MoreThanOneEntityException
+	 */
+	private void retrieveReferenceValues(EntityInstanceFound entitiesInstanceFound) throws MoreThanOneEntityException {
+		if(entitiesInstanceFound.getEntityInstance().getReferenceValues()!=null) {
+			for (ReferenceValue referenceValue : entitiesInstanceFound.getEntityInstance().getReferenceValues()) {
+				Reference reference = referenceRepository.findByName(referenceValue.getReferenceName());
+				if(reference!=null) {
+					referenceValue.setReference(reference);
+					referenceValue.setEntityInstance(entitiesInstanceFound.getEntityInstance());
+				}else {
+					dataBasePopulationLog.error("No reference founded : " + referenceValue.getReferenceName() + " please analize and correct this error. ");
+				}
+			}
+		}else {
+			dataBasePopulationLog.info("No reference values in entity instance : " + entitiesInstanceFound.getEntityInstance().getValue() + " ---  analize if could add the database references relations for this keyword -- " + " tagger : " +  entitiesInstanceFound.getEntityInstance().getTaggerName());
 		}
 	}
 	
@@ -231,6 +212,9 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 			try {
 				EntityType entityTypeDB = entityTypeRepository.findByName(entityType.getName());
 				if(entityTypeDB==null) {
+					for (Reference reference : entityType.getReferences()) {
+						reference.setEntityType(entityType);
+					}
 					entityType = entityTypeRepository.save(entityType);
 					this.entitiesTypes.put(entityType.getName(), entityType);
 				}else {
@@ -241,9 +225,6 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 				e.printStackTrace();
 			}
 		}
-		
-		entityTypeRepository.findAll();
-		
 	}
 	
 	

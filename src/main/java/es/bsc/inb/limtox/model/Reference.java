@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-//@Entity
+@Entity
 public class Reference {
 
 	@Id
@@ -16,6 +16,7 @@ public class Reference {
 	private String name;
 	
 	private String description;
+	
 	@ManyToOne
 	private EntityType entityType;
 	

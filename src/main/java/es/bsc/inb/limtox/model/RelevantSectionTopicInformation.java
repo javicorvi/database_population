@@ -1,8 +1,10 @@
 package es.bsc.inb.limtox.model;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 @Entity
+@DiscriminatorValue("2")
 public class RelevantSectionTopicInformation extends RelevantTopicInformation {
 	
 	@ManyToOne

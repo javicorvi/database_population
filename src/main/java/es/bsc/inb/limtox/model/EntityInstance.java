@@ -22,16 +22,17 @@ public class EntityInstance {
 	@Column(length=120,nullable=false)
 	private String value="";
 	
-	@Column(length=100,nullable=false)
+	@Transient
+	//@Column(length=100,nullable=false)
 	private String entityTypeName;
 	
 	@Column(length=50,nullable=false)
 	private String taggerName;
 	
-	@ManyToOne(optional=false, cascade=CascadeType.ALL)
+	@ManyToOne(optional=false)
 	private EntityType entityType;
 	
-	@Transient
+	//@Transient
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "entityInstance", orphanRemoval = true)
 	private List<ReferenceValue> referenceValues;
 	
@@ -82,7 +83,12 @@ public class EntityInstance {
 	}
 
 	public String getEntityTypeName() {
-		return entityTypeName;
+		if(entityTypeName.endsWith("_cyp")) {
+			return "cyps";
+		}else {
+			return entityTypeName;
+		}
+		
 	}
 
 	public void setEntityTypeName(String entityTypeName) {

@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 @Entity
 public class Section implements LimtoxEntity {
@@ -26,7 +25,7 @@ public class Section implements LimtoxEntity {
 	@Column(name = "internalname", nullable = true, length = 100)
 	private String internalName;
 	
-	@Column(name = "text", nullable = false, length = 10000)
+	@Column(name = "text", nullable = true, length = 10000)
 	private String text;
 	
 	@Column(nullable = false)

@@ -1,25 +1,29 @@
 package es.bsc.inb.limtox.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
-//@Entity
+@Entity
 public class ReferenceValue {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Transient
 	private String referenceName;
 	
+	@Column(length=3000)
 	private String value="";
 	
 	@ManyToOne
 	private EntityInstance entityInstance;
 	
-	@ManyToOne
+	@ManyToOne(optional=false)
 	private Reference reference;
 
 	
@@ -27,7 +31,7 @@ public class ReferenceValue {
 		super();
 	}
 
-	public ReferenceValue(String name, String value) {
+	public ReferenceValue(String value, String name) {
 		super();
 		this.value = value;
 		//this.reference = reference;

@@ -62,8 +62,7 @@ public class MainServiceImpl {
 		    }
 		    dataBasePopulationService.createAndLoadEntityTypes(inputEntityStructureFile);
 		    
-		    
-			List<String> filesProcessed = readFilesProcessed(outputDirectoryPath); 
+		    List<String> filesProcessed = readFilesProcessed(outputDirectoryPath); 
 		    BufferedWriter filesPrecessedWriter = new BufferedWriter(new FileWriter(outputDirectoryPath + File.separator + "list_files_processed.dat", true));
 		    File[] files =  inputDirectory.listFiles();
 			for (File folders_files : files) {
@@ -73,11 +72,7 @@ public class MainServiceImpl {
 						if(file_to_populate.getName().endsWith(".json") && filesProcessed!=null && !filesProcessed.contains(folders_files.getName()+"/"+file_to_populate.getName())){
 							try {
 								dataBasePopulationLog.info("Processing document : " + folders_files.getName()+"/"+file_to_populate.getName());
-								
-								
 								dataBasePopulationService.execute(file_to_populate);
-								
-								
 								filesPrecessedWriter.write(folders_files.getName()+"/"+file_to_populate.getName()+"\n");
 								filesPrecessedWriter.flush();
 							}catch(Exception e) {

@@ -15,5 +15,6 @@ class Main {
         //mainService.indexArticles();
         String properties_parameters_path = args[0];
         mainService.execute(properties_parameters_path);
+        System.exit(0);
     }
 }

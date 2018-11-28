@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class EntityAssociationSentence {
@@ -13,13 +14,20 @@ public class EntityAssociationSentence {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
+	
 	private String entityInstanceFoundId;
 	
 	private String entityInstanceName;
 	
+	@ManyToOne(optional=true)
+	private EntityInstanceFound entityInstanceFoundOrigin;
+	
 	private String associationEntityInstanceFoundId;
 	
 	private String associationEntityInstanceFoundName;
+	
+	@ManyToOne(optional=true)
+	private EntityInstanceFound entityInstanceFoundAssociated;
 	
 	private String keyword;
 	
@@ -114,9 +122,38 @@ public class EntityAssociationSentence {
 	public void setSentence(Sentence sentence) {
 		this.sentence = sentence;
 	}
+
+	public EntityInstanceFound getEntityInstanceFoundOrigin() {
+		return entityInstanceFoundOrigin;
+	}
+
+	public void setEntityInstanceFoundOrigin(EntityInstanceFound entityInstanceFoundOrigin) {
+		this.entityInstanceFoundOrigin = entityInstanceFoundOrigin;
+	}
+
+	public EntityInstanceFound getEntityInstanceFoundAssociated() {
+		return entityInstanceFoundAssociated;
+	}
+
+	public void setEntityInstanceFoundAssociated(EntityInstanceFound entityInstanceFoundAssociated) {
+		this.entityInstanceFoundAssociated = entityInstanceFoundAssociated;
+	}
 	
-	
-	
+	/**
+	 * Set the entity instance found in the association
+	 * @param sentence
+	 */
+	public void setEntityInstancesFound(Sentence sentence) {
+		if(this.sentence.getEntitiesInstanceFound()!=null) {
+			for (EntityInstanceFound entitiesInstanceFound : this.sentence.getEntitiesInstanceFound()) {
+				if(this.getEntityInstanceFoundId().equals(entitiesInstanceFound.getEntityInstanceId())) {
+					this.setEntityInstanceFoundOrigin(entitiesInstanceFound);
+				}else if(this.getAssociationEntityInstanceFoundId().equals(entitiesInstanceFound.getEntityInstanceId())){
+					this.setEntityInstanceFoundAssociated(entitiesInstanceFound);
+				}
+			}
+		}
+	}
 	
 
 	

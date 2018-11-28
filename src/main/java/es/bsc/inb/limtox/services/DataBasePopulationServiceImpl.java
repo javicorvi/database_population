@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,6 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 	@Autowired
 	private ReferenceRepository referenceRepository;
 	
-	
 	HashMap<String, EntityType> entitiesTypes = new HashMap<String,EntityType>();
 	
 	public void execute(File documentFile) {
@@ -99,6 +97,11 @@ public class DataBasePopulationServiceImpl implements DataBasePopulationService{
 					}
 					for (EntityAssociationSentence entityAssociationSentence : sentence.getEntitiesAssociationsInstanceFound()) {
 						entityAssociationSentence.setSentence(sentence);
+						entityAssociationSentence.setEntityInstancesFound(sentence);
+						if(entityAssociationSentence.getEntityInstanceFoundOrigin()==null || entityAssociationSentence.getEntityInstanceFoundAssociated()==null) {
+							dataBasePopulationLog.error("Error entity association sentente, the origin or destination of the asociation is null : id origin : " + 
+									entityAssociationSentence.getEntityInstanceFoundId() + " id destination : " + entityAssociationSentence.getAssociationEntityInstanceFoundId() );
+						}
 					}
 					sentence.setSection(section);
 				}

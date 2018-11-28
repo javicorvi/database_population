@@ -30,9 +30,8 @@ public class MainServiceImpl {
 	@Autowired
 	DataBasePopulationService dataBasePopulationService;
 	
-	@Autowired
-	ElasticSearchService elasticSearchService;
-	
+//	@Autowired
+//	ElasticSearchService elasticSearchService;
 	
 	public void execute(String propertiesParametersPath) {
 		try {
@@ -61,7 +60,6 @@ public class MainServiceImpl {
 		    	return ;
 		    }
 		    dataBasePopulationService.createAndLoadEntityTypes(inputEntityStructureFile);
-		    
 		    List<String> filesProcessed = readFilesProcessed(outputDirectoryPath); 
 		    BufferedWriter filesPrecessedWriter = new BufferedWriter(new FileWriter(outputDirectoryPath + File.separator + "list_files_processed.dat", true));
 		    File[] files =  inputDirectory.listFiles();
@@ -81,10 +79,11 @@ public class MainServiceImpl {
 						}
 					}
 				}else {
-					
+					dataBasePopulationLog.warn("Not a directory: " + folders_files +  " --- Analize Why ");
 				}
 			}
 			filesPrecessedWriter.close();
+			dataBasePopulationLog.info("Process Finished ");
 		}  catch (Exception e) {
 			dataBasePopulationLog.error("Generic error in the database population step",e);
 		} 

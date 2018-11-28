@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 @Entity
 public class EntityInstanceFound implements LimtoxEntity {
@@ -110,6 +109,8 @@ public class EntityInstanceFound implements LimtoxEntity {
 	public void setMentionSource(String mentionSource) {
 		this.mentionSource = mentionSource;
 	}
+
+	
 
 	public String getEntityInstanceId() {
 		return entityInstanceId;

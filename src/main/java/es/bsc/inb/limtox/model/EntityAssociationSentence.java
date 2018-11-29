@@ -14,16 +14,16 @@ public class EntityAssociationSentence {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	
+	@Transient
 	private String entityInstanceFoundId;
-	
+	@Transient
 	private String entityInstanceName;
 	
 	@ManyToOne(optional=true)
 	private EntityInstanceFound entityInstanceFoundOrigin;
-	
+	@Transient
 	private String associationEntityInstanceFoundId;
-	
+	@Transient
 	private String associationEntityInstanceFoundName;
 	
 	@ManyToOne(optional=true)
